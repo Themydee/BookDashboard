@@ -14,7 +14,8 @@ import {
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Navbar() {
-  const { isAuthenticated, loginWithRedirect, logout, isLoading } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout, isLoading, user } =
+    useAuth0();
 
   return (
     <Box bg="white" px={16} shadow="md" position="sticky" top={0} zIndex={100}>
@@ -28,9 +29,23 @@ export default function Navbar() {
         <Box>
           {!isLoading && isAuthenticated ? (
             <Menu>
-              <MenuButton as={Avatar} size="sm" cursor="pointer" />
+              <MenuButton
+                as={Avatar}
+                size="sm"
+                cursor="pointer"
+                name={user?.name}
+                src={user?.picture}
+              />
               <MenuList>
-                <MenuItem>
+                <MenuItem
+                  onClick={() =>
+                    logout({
+                      logoutParams: {
+                        returnTo: window.location.origin,
+                      },
+                    })
+                  }
+                >
                   Logout
                 </MenuItem>
               </MenuList>
