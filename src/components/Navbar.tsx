@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Flex,
@@ -7,10 +8,14 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Button,
+  HStack,
 } from "@chakra-ui/react";
-import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Navbar() {
+  const { isAuthenticated, loginWithRedirect, logout, isLoading } = useAuth0();
+
   return (
     <Box bg="white" px={16} shadow="md" position="sticky" top={0} zIndex={100}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
@@ -20,12 +25,34 @@ export default function Navbar() {
           </Text>
         </Box>
 
-        <Menu>
-          <MenuButton as={Avatar} size="sm" cursor="pointer" />
-          <MenuList>
-            <MenuItem>Logout</MenuItem>
-          </MenuList>
-        </Menu>
+        <Box>
+          {!isLoading && isAuthenticated ? (
+            <Menu>
+              <MenuButton as={Avatar} size="sm" cursor="pointer" />
+              <MenuList>
+                <MenuItem>
+                  Logout
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <HStack spacing={3}>
+              <Button variant="ghost" onClick={() => loginWithRedirect()}>
+                Log in
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={() =>
+                  loginWithRedirect({
+                    authorizationParams: { screen_hint: "signup" },
+                  })
+                }
+              >
+                Sign up
+              </Button>
+            </HStack>
+          )}
+        </Box>
       </Flex>
     </Box>
   );
