@@ -5,7 +5,6 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Books from "./pages/dashboard/Books";
-import Authors from "./pages/dashboard/Authors";
 
 const App = () => {
   return (
@@ -28,7 +27,6 @@ const App = () => {
         >
           <Route index element={<Books />} /> {/* default page */}
           <Route path="books" element={<Books />} />
-          <Route path="authors" element={<Authors />} />
         </Route>
       </Routes>
     </BrowserRouter>

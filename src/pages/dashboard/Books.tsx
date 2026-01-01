@@ -1,4 +1,4 @@
-
+// src/pages/dashboard/Books.tsx
 import React, { useState } from "react";
 import {
   Box,
@@ -19,28 +19,27 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  useDisclosure,
   FormControl,
   FormLabel,
   HStack,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 type Book = {
   id: number;
-  title: string;
-  author: string;
-  year: number;
+  name: string;
+  description: string;
 };
 
 export default function Books() {
   const [books, setBooks] = useState<Book[]>([
-    { id: 1, title: "1984", author: "George Orwell", year: 1949 },
-    { id: 2, title: "The Hobbit", author: "J.R.R. Tolkien", year: 1937 },
+    { id: 1, name: "1984", description: "Dystopian novel by George Orwell" },
+    { id: 2, name: "The Hobbit", description: "Fantasy novel by J.R.R. Tolkien" },
   ]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editBook, setEditBook] = useState<Book | null>(null);
-  const [form, setForm] = useState({ title: "", author: "", year: "" });
+  const [form, setForm] = useState({ name: "", description: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,28 +49,26 @@ export default function Books() {
     if (editBook) {
       setBooks((prev) =>
         prev.map((b) =>
-          b.id === editBook.id
-            ? { ...b, title: form.title, author: form.author, year: Number(form.year) }
-            : b
+          b.id === editBook.id ? { ...b, name: form.name, description: form.description } : b
         )
       );
     } else {
       const newBook: Book = {
         id: books.length + 1,
-        title: form.title,
-        author: form.author,
-        year: Number(form.year),
+        name: form.name,
+        description: form.description,
       };
       setBooks([...books, newBook]);
     }
-    setForm({ title: "", author: "", year: "" });
+
+    setForm({ name: "", description: "" });
     setEditBook(null);
     onClose();
   };
 
   const handleEdit = (book: Book) => {
     setEditBook(book);
-    setForm({ title: book.title, author: book.author, year: book.year.toString() });
+    setForm({ name: book.name, description: book.description });
     onOpen();
   };
 
@@ -92,18 +89,18 @@ export default function Books() {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>Title</Th>
-              <Th>Author</Th>
-              <Th>Year</Th>
+              <Th>ID</Th>
+              <Th>Name</Th>
+              <Th>Description</Th>
               <Th>Actions</Th>
             </Tr>
           </Thead>
           <Tbody>
             {books.map((book) => (
               <Tr key={book.id}>
-                <Td>{book.title}</Td>
-                <Td>{book.author}</Td>
-                <Td>{book.year}</Td>
+                <Td>{book.id}</Td>
+                <Td>{book.name}</Td>
+                <Td>{book.description}</Td>
                 <Td>
                   <HStack spacing={2}>
                     <Button size="sm" colorScheme="green" onClick={() => handleEdit(book)}>
@@ -121,38 +118,34 @@ export default function Books() {
       </TableContainer>
 
       {/* Add/Edit Modal */}
-      <Modal isOpen={isOpen} onClose={() => { onClose(); setEditBook(null); }}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          setEditBook(null);
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{editBook ? "Edit Book" : "Add New Book"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl mb={3}>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Name</FormLabel>
               <Input
-                name="title"
-                value={form.title}
+                name="name"
+                value={form.name}
                 onChange={handleChange}
-                placeholder="Book title"
+                placeholder="Book name"
               />
             </FormControl>
             <FormControl mb={3}>
-              <FormLabel>Author</FormLabel>
+              <FormLabel>Description</FormLabel>
               <Input
-                name="author"
-                value={form.author}
+                name="description"
+                value={form.description}
                 onChange={handleChange}
-                placeholder="Author name"
-              />
-            </FormControl>
-            <FormControl mb={3}>
-              <FormLabel>Year</FormLabel>
-              <Input
-                name="year"
-                type="number"
-                value={form.year}
-                onChange={handleChange}
-                placeholder="Publication year"
+                placeholder="Book description"
               />
             </FormControl>
           </ModalBody>
@@ -161,7 +154,14 @@ export default function Books() {
             <Button colorScheme="blue" mr={3} onClick={handleAddOrEdit}>
               {editBook ? "Save Changes" : "Add Book"}
             </Button>
-            <Button onClick={() => { onClose(); setEditBook(null); }}>Cancel</Button>
+            <Button
+              onClick={() => {
+                onClose();
+                setEditBook(null);
+              }}
+            >
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
